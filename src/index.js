@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const cors = require('cors');
 
 
 dotenv.config();
@@ -10,6 +11,7 @@ dotenv.config();
 const app = express();
 
 //Middlewares configuration
+app.use(cors());
 app.use(express.json());
 
 

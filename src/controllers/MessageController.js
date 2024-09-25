@@ -22,10 +22,7 @@ class MessageController {
             });
 
             newMessage.user = username
-
-            console.log(newMessage);
             
-
             res.status(201).json({
                 message: 'Message posted successfully!',
                 data: newMessage,
