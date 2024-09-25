@@ -1,12 +1,32 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const userRoutes = require('./routes/userRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-app.get('/', (req, res) => {
-    res.send('A clear sign that you are not yet dead!');
-});
+//Middlewares configuration
+app.use(express.json());
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+
+// MongoDB connection
+
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log('Connected to MongoDB'))
+.catch((error) => console.error('MongoDB connection error:', error));
+
+// Routes
+app.use('/users/', userRoutes);
+app.use('/messages/', messageRoutes); 
+
+
+// Starting the server
+const PORT = process.env.PORT || 5000;
+mongoose.connection.once('open',()=>{
+    app.listen(PORT, () => {console.log(`Server running on port ${PORT}`)});
+})
+
