@@ -1,5 +1,7 @@
 const MessageModel = require("../models/Message");
 const MessageService = require("../models/Message");
+const observers = require('../index');
+const UserService = require('../models/User'); 
 
 class MessageController {
   async postMessage(req, res) {
@@ -8,6 +10,10 @@ class MessageController {
     console.log(req);
 
     const userId = req.user._id;
+    const user = await UserService.findById(userId);
+
+    console.log(user);
+    
 
     if (!message) {
       return res.status(400).json({ message: "Message content is required" });
@@ -19,14 +25,30 @@ class MessageController {
         user: userId,
       });
 
+      const data = {
+        data: newMessage,
+        user: user.username
+      }
+      // Notify all connected clients (observers) about the new message
+      this.notifyObservers(data);
+
       res.status(201).json({
         message: "Message posted successfully!",
-        data: newMessage,
+        data,
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }
+
+  // Observer Design Pattern: Notify all connected clients of the new message
+  notifyObservers(message) {
+    
+    Object.values(observers).forEach(observer => {
+        observer.emit('newMessage', message); // Send the message to all connected clients
+    });
+    
+}
 
   async getMessagesByUser(req, res) {
     try {
