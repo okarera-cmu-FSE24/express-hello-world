@@ -1,28 +1,13 @@
-# FSE-Project1
+# PURPOSE
 
-## Project Description
+This is your team's repo for the ESN Application, the group project conducted in 18652.
 
-This is a real-time chat room application built with Node.js, Express, and Socket.IO. Users can register, log in, and participate in a chat room where they can send and receive messages in real-time. The application uses PostgreSQL for data persistence and sessions for user management.
+# IMPORTANT RULES
 
-## Features
-
-- User registration and login.
-- Real-time chat messaging with Socket.IO.
-- Persistent chat history stored in PostgreSQL.
-- Dynamic message updates for all connected clients.
-- Session management for user authentication.
-## Libraries Used
-
-* Express
-* Body-Parser
-* Socket.IO
-* Express-Session
-* Express-Socket.io-Session
-* PostgreSQL Client for Node.js (pg)
-* pg-promise
-* Nodemon (for development)
-
-## Summary of Installation Commands:
-
-\# npm install express body-parser socket.io express-session express-socket.io-session pg pg-promise
-npm install --save-dev nodemon
+- YOU ARE _NOT_ PERMITTED TO SHARE THIS REPO OUTSIDE THIS GITHUB ORG.
+- YOU ARE _NOT_ PERMITTED TO FORK THIS REPO UNDER ANY CIRCUMSTANCES.
+- YOU ARE _NOT_ PERMITTED TO CREATE ANY PUBLIC REPOS INSIDE THE CMUSV-FSE ORGANIZATION.
+- YOU SHOULD HAVE LINKS FROM THIS README FILE TO YOUR PROJECT DOCUMENTS, SUCH AS YOUR REST API SPECS AND YOUR ARCHITECTURE DOCUMENT.
+- YOUR GITHUB ACCOUNT'S PRIMARY EMAIL MUST BE ASSOCIATED WITH YOUR ANDREW EMAIL.
+- YOUR GITHUB PROFILE MUST BE PUBLIC AND SHOULD HAVE YOUR FULL NAME AND RECOGNIZABLE HEADSHOT PHOTO.
+- MAKE SURE TO CHECK AND UPDATE YOUR LOCAL GIT CONFIGURATION IN ORDER TO MATCH YOUR LOCAL GIT CREDENTIALS TO YOUR SE-PROJECT GITHUB CREDENTIALS (COMMIT USING YOUR ANDREW EMAIL ASSOCIATED WITH YOUR GITHUB ACCOUNT): OTHERWISE YOUR COMMITS MAY BE EXCLUDED FROM GITHUB STATISTICS AND REPO AUDITS WILL UNDERESTIMATE YOUR CONTRIBUTION.
