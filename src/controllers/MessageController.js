@@ -5,9 +5,11 @@ class MessageController {
     async postMessage(req, res) {
         const { message } = req.body;
 
-        console.log(req);
-        
         const userId = req.user._id; 
+        const username = req.user.username
+     
+        
+        
 
         if (!message) {
             return res.status(400).json({ message: 'Message content is required' });
@@ -18,6 +20,11 @@ class MessageController {
                 message,
                 user: userId
             });
+
+            newMessage.user = username
+
+            console.log(newMessage);
+            
 
             res.status(201).json({
                 message: 'Message posted successfully!',
