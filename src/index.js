@@ -50,8 +50,6 @@ io.on('connection', (socket) => {
 
     // Adding the new connected client to observers list
     observers.push(socket);
-
-   
     socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
         observers = observers.filter((observer) => observer.id !== socket.id);

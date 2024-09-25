@@ -7,12 +7,8 @@ class MessageController {
   async postMessage(req, res) {
     const { message } = req.body;
 
-    console.log(req);
-
     const userId = req.user._id;
     const user = await UserService.findById(userId);
-
-    console.log(user);
     
 
     if (!message) {
