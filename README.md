@@ -1,15 +1,28 @@
-# README
+# FSE-Project1
 
-This is the [Express](https://expressjs.com) [Hello world](https://expressjs.com/en/starter/hello-world.html) example on [Render](https://render.com).
+## Project Description
 
-The app in this repo is deployed at [https://express.onrender.com](https://express.onrender.com).
+This is a real-time chat room application built with Node.js, Express, and Socket.IO. Users can register, log in, and participate in a chat room where they can send and receive messages in real-time. The application uses PostgreSQL for data persistence and sessions for user management.
 
-## Deployment
+## Features
 
-See https://render.com/docs/deploy-node-express-app or follow the steps below:
+- User registration and login.
+- Real-time chat messaging with Socket.IO.
+- Persistent chat history stored in PostgreSQL.
+- Dynamic message updates for all connected clients.
+- Session management for user authentication.
+## Libraries Used
 
-Create a new web service with the following values:
-  * Build Command: `yarn`
-  * Start Command: `node app.js`
+* Express
+* Body-Parser
+* Socket.IO
+* Express-Session
+* Express-Socket.io-Session
+* PostgreSQL Client for Node.js (pg)
+* pg-promise
+* Nodemon (for development)
 
-That's it! Your web service will be live on your Render URL as soon as the build finishes.
+## Summary of Installation Commands:
+
+\# npm install express body-parser socket.io express-session express-socket.io-session pg pg-promise
+npm install --save-dev nodemon

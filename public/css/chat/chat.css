@@ -1,0 +1,97 @@
+.body {
+  background-color: white !important;
+  background-image: linear-gradient(to bottom, white, white);
+  overflow: hidden;
+}
+
+.container {
+  background-color: white;
+  height: 100vh;
+}
+.container .header {
+  background-color: white;
+  width: 100%;
+  box-shadow: 0px 5px 5px rgb(234, 235, 236);
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  height: 8vh;
+}
+.container .header h2 {
+  background: linear-gradient(to bottom, #47BE68, #1C3623);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.container .chatSection {
+  height: 84vh;
+  padding: 1em;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.container .chatSection .chat-message {
+  max-width: 50%;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 0.5em 1em;
+  list-style: none;
+  align-self: end;
+  overflow: visible;
+}
+.container .chatSection .chat-message .text {
+  background-color: #59966d;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  color: rgb(228, 252, 236);
+}
+.container .chatSection .chat-message .username-time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+}
+.container .chatSection .chat-message-me {
+  align-self: start;
+}
+.container .chatSection .chat-message-me .text {
+  background-color: #aeb4b0 !important;
+  color: black;
+}
+.container .message {
+  position: sticky;
+  bottom: 0px;
+  background-color: white;
+  box-shadow: 0px -5px 5px rgb(234, 235, 236);
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  height: 8vh;
+  gap: 1em;
+  z-index: 10;
+}
+.container .message input {
+  border: none;
+  width: 100%;
+  outline: none;
+}
+.container .message input::-moz-placeholder {
+  color: #9da39f;
+}
+.container .message input::placeholder {
+  color: #9da39f;
+}
+
+@media screen and (max-width: 540px) {
+  .container .header, .container .message {
+    height: 70px;
+  }
+  .chatSection {
+    height: 75vh;
+    width: 100%;
+  }
+  .chatSection .chat-message {
+    max-width: 100% !important;
+    width: 80% !important;
+  }
+}/*# sourceMappingURL=chat.css.map */
