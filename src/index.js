@@ -6,19 +6,12 @@ const messageRoutes = require('./routes/messageRoutes');
 const http = require('http');
 const { Server } = require('socket.io'); 
 const cors = require('cors');
-const { log } = require('console');
-
+const observers = require('./services/Observers')
+const app = express();
+const server = http.createServer(app);
 
 
 dotenv.config();
-
-const app = express();
-
-const server = http.createServer(app);
-
-//Middlewares configuration
-app.use(cors());
-app.use(express.json());
 
 
 const io = new Server(server, {
@@ -30,6 +23,9 @@ const io = new Server(server, {
     },
 });
 
+//Middlewares configuration
+app.use(cors());
+app.use(express.json());
 
 
 // MongoDB connection
@@ -42,25 +38,26 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/users/', userRoutes);
 app.use('/messages/', messageRoutes); 
 
-// Observer list to store connected clients
-let observers = [];
 
 io.on('connection', (socket) => {
     console.log('New client connected:', socket.id);
 
     // Adding the new connected client to observers list
-    observers.push(socket);
+    observers.add(socket);
     socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
-        observers = observers.filter((observer) => observer.id !== socket.id);
+        observers.remove(socket.id);
     });
 });
 
 // Starting the server
 const PORT = process.env.PORT || 5000;
-mongoose.connection.once('open',()=>{
-    app.listen(PORT, () => {console.log(`Server running on port ${PORT}`)});
-})
+// mongoose.connection.once('open',()=>{
+server.listen(PORT, () => {console.log(`Server running on port ${PORT}`)});
+// })
+
+console.log('observers');
+console.log(observers);
 
 
 module.exports = observers;

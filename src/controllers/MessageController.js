@@ -1,6 +1,6 @@
 const MessageModel = require("../models/Message");
 const MessageService = require("../models/Message");
-const observers = require('../index');
+const observers = require('../services/Observers');
 const UserService = require('../models/User'); 
 
 class MessageController {
@@ -40,7 +40,7 @@ class MessageController {
   // Observer Design Pattern: Notify all connected clients of the new message
   notifyObservers(message) {
     
-    Object.values(observers).forEach(observer => {
+    observers.getAll().forEach(observer => {
         observer.emit('newMessage', message); // Send the message to all connected clients
     });
     
