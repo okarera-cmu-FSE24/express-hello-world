@@ -1,4 +1,5 @@
 const express = require('express');
+
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
@@ -6,7 +7,8 @@ const messageRoutes = require('./routes/messageRoutes');
 const http = require('http');
 const { Server } = require('socket.io'); 
 const cors = require('cors');
-const observers = require('./services/Observers')
+const observers = require('./services/observerService')
+
 const app = express();
 const server = http.createServer(app);
 
