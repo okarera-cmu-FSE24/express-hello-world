@@ -21,7 +21,7 @@ router.get("/user/:userId?", protect, (req, res) =>
 );
 router.get(
   "/all",
-  protect,
+  protect,(req, res) =>
   // messageController.getAllMessages.bind(messageController)
   messageController.getAllMessages(req, res)
 );
