@@ -16,12 +16,14 @@ router.post("/public", protect, (req, res) =>
   messageController.postMessage(req, res)
 );
 router.get("/user/:userId?", protect, (req, res) =>
-  messageController.getMessagesByUser.bind(messageController)
+  // messageController.getMessagesByUser.bind(messageController)
+  messageController.getMessagesByUser(req, res)
 );
 router.get(
   "/all",
   protect,
-  messageController.getAllMessages.bind(messageController)
+  // messageController.getAllMessages.bind(messageController)
+  messageController.getAllMessages(req, res)
 );
 
 module.exports = router;
