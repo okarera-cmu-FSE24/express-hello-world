@@ -1,19 +1,21 @@
-const UserModel = require("../models/User");
-const jwt = require("jsonwebtoken");
-
 class UserController {
+  constructor(userModel, jwt) {
+    this.userModel = userModel;
+    this.jwt = jwt;
+  }
+
   generateToken(id) {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    return this.jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
   }
   async register(req, res) {
     const { username, password } = req.body;
     try {
-      const userExists = await UserModel.findByUsername(username);
+      const userExists = await this.userModel.findByUsername(username);
       if (userExists) {
         return res.status(400).json({ message: "Username already exists" });
       }
 
-      const user = await UserModel.createUser({ username, password });
+      const user = await this.userModel.createUser({ username, password });
       res.status(201).json({
         message: "User Registered Successfully!",
         username: user.username,
@@ -27,9 +29,9 @@ class UserController {
   async login(req, res) {
     const { username, password } = req.body;
     try {
-      const user = await UserModel.findByUsername(username);
+      const user = await this.userModel.findByUsername(username);
 
-      if (user && (await UserModel.matchPassword(password, user.password))) {
+      if (user && (await this.userModel.matchPassword(password, user.password))) {
         res.json({
           _id: user._id,
           username: user.username,
@@ -45,7 +47,7 @@ class UserController {
 
   async getAllUsers(req, res) {
     try {
-      const users = await UserModel.getAllUsers();
+      const users = await this.userModel.getAllUsers();
       res.json(users);
     } catch (error) {
       res
@@ -54,4 +56,4 @@ class UserController {
     }
   }
 }
-module.exports = new UserController();
+module.exports = UserController;

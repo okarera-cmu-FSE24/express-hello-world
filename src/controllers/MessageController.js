@@ -1,14 +1,17 @@
-const MessageModel = require("../models/Message");
-const MessageService = require("../models/Message");
-const observers = require('../services/Observers');
-const UserService = require('../models/User'); 
 
 class MessageController {
-  async postMessage(req, res) {
-    const { message } = req.body;
+  
+  constructor(messageModel, userModel, observerService) {
+    this.messageModel = messageModel;
+    this.userModel = userModel;
+    this.observerService = observerService;
+  }
 
+  async postMessage(req, res) {
+
+    const { message } = req.body;
     const userId = req.user._id;
-    const user = await UserService.findById(userId);
+    const user = await this.userModel.findById(userId);
     
 
     if (!message) {
@@ -16,7 +19,7 @@ class MessageController {
     }
 
     try {
-      const newMessage = await MessageModel.createMessage({
+      const newMessage = await this.messageModel.createMessage({
         message,
         user: userId,
       });
@@ -40,7 +43,7 @@ class MessageController {
   // Observer Design Pattern: Notify all connected clients of the new message
   notifyObservers(message) {
     
-    observers.getAll().forEach(observer => {
+    this.observerService.getAll().forEach(observer => {
         observer.emit('newMessage', message); // Send the message to all connected clients
     });
     
@@ -49,7 +52,7 @@ class MessageController {
   async getMessagesByUser(req, res) {
     try {
       const userId = req.params.userId || req.user._id;
-      const messages = await MessageService.getMessagesByUser(userId);
+      const messages = await this.messageModel.getMessagesByUser(userId);
       res.json(messages);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -58,7 +61,7 @@ class MessageController {
 
   async getAllMessages(req, res) {
     try {
-      const messages = await MessageService.getAllMessages();
+      const messages = await this.messageModel.getAllMessages();
       res.json(messages);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -66,4 +69,4 @@ class MessageController {
   }
 }
 
-module.exports = new MessageController();
+module.exports = MessageController;
