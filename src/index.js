@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const statusRoutes = require('./routes/statusRoutes');
 const http = require('http');
 const { Server } = require('socket.io'); 
 const cors = require('cors');
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/users/', userRoutes);
 app.use('/messages/', messageRoutes); 
+app.use('', statusRoutes);
 
 
 io.on('connection', (socket) => {
@@ -54,12 +56,12 @@ io.on('connection', (socket) => {
 
 // Starting the server
 const PORT = process.env.PORT || 5000;
-// mongoose.connection.once('open',()=>{
+mongoose.connection.once('open',()=>{
 server.listen(PORT, () => {console.log(`Server running on port ${PORT}`)});
-// })
+})
 
 console.log('observers');
 console.log(observers);
 
 
-module.exports = observers;
+module.exports = {observers,io};
