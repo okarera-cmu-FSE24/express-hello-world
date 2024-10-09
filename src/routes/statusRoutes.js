@@ -1,6 +1,6 @@
 const express = require('express');
 const StatusController = require('../controllers/StatusController');
-const protect = require('../middlewares/authMiddleware');  // Assuming JWT auth middleware is used
+const protect = require('../middlewares/authMiddleware');  
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 const UserService = require('../models/User');  // Use the UserService
-const PrivateMessageService = require('../services/PrivateMessageService');  // Import the new service
-const { io } = require('../index'); // Assuming socket.io is set up in app.js
+const PrivateMessageService = require('../services/PrivateMessageService');  
+const { io } = require('../index'); 
 
 class ChatPrivatelyController {
     // Initiate private chat and return messages between two users

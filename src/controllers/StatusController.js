@@ -1,4 +1,4 @@
-const UserService = require('../models/User');  // Assuming UserService is used to manage users
+const UserService = require('../models/User');  
 const StatusService = require('../services/StatusService');
 
 class StatusController {
