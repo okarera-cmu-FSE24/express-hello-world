@@ -4,6 +4,7 @@ const MessageModel = require("../models/Message");
 const UserModel = require("../models/User");
 const Observers = require('../services/observerService');
 const MessageControllerClass = require('../controllers/MessageController');
+const ChatPrivatelyController = require('../controllers/ChatPrivatelyController');
 
 const protect = require("../middlewares/authMiddleware");
 
@@ -25,5 +26,14 @@ router.get(
   // messageController.getAllMessages.bind(messageController)
   messageController.getAllMessages(req, res)
 );
+
+// Route to initiate private chat between two users (retrieve messages)
+
+
+// Route to send a private message
+router.post('/private', protect, ChatPrivatelyController.sendMessage);
+
+// Route to get the latest message between two users
+router.get('/private/:userName1/:userName2', protect, ChatPrivatelyController.getPrivateMessages);
 
 module.exports = router;
