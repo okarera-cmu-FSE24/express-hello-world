@@ -1,0 +1,114 @@
+const UserService = require('../../../models/User.js');
+const mongoose = require('mongoose');
+
+
+describe('UserService', () => {
+  describe('createUser', () => {
+    const validUserData = {
+      username: 'testuser',
+      password: 'Test123!@#'
+    };
+
+    it('should create a new user successfully', async () => {
+      const user = await UserService.createUser(validUserData);
+      
+      expect(user).toBeDefined();
+      expect(user.username).toBe(validUserData.username);
+      expect(user._id).toBeDefined();
+    });
+
+    it('should fail when creating user with existing username', async () => {
+      await UserService.createUser(validUserData);
+      
+      await expect(async () => {
+        await UserService.createUser(validUserData);
+      }).rejects.toThrow();
+    });
+
+    it('should fail when required fields are missing', async () => {
+      await expect(async () => {
+        await UserService.createUser({ username: 'testuser' });
+      }).rejects.toThrow();
+    });
+  });
+
+  describe('findByUsername', () => {
+    it('should find existing user by username', async () => {
+      const userData = { username: 'findme', password: 'password123' };
+      await UserService.createUser(userData);
+
+      const foundUser = await UserService.findByUsername('findme');
+      expect(foundUser.username).toBe(userData.username);
+    });
+
+    it('should return null for non-existent username', async () => {
+      const foundUser = await UserService.findByUsername('nonexistent');
+      expect(foundUser).toBeNull();
+    });
+  });
+
+  describe('findById', () => {
+    it('should find user by id without password', async () => {
+      const userData = { username: 'iduser', password: 'password123' };
+      const createdUser = await UserService.createUser(userData);
+
+      const foundUser = await UserService.findById(createdUser._id);
+      expect(foundUser.username).toBe(userData.username);
+      expect(foundUser.password).toBeUndefined();
+    });
+
+    it('should return null for non-existent id', async () => {
+      const nonExistentId = new mongoose.Types.ObjectId();
+      const foundUser = await UserService.findById(nonExistentId);
+      expect(foundUser).toBeNull();
+    });
+  });
+
+  describe('matchPassword', () => {
+    it('should return true for matching password', async () => {
+      const userData = { username: 'passwordtest', password: 'correctpass' };
+      const user = await UserService.createUser(userData);
+
+      const isMatch = await UserService.matchPassword(
+        'correctpass',
+        user.password
+      );
+      expect(isMatch).toBe(true);
+    });
+
+    it('should return false for non-matching password', async () => {
+      const userData = { username: 'passwordtest', password: 'correctpass' };
+      const user = await UserService.createUser(userData);
+
+      const isMatch = await UserService.matchPassword(
+        'wrongpass',
+        user.password
+      );
+      expect(isMatch).toBe(false);
+    });
+  });
+
+  describe('getAllUsers', () => {
+    it('should return all users without passwords', async () => {
+      const users = [
+        { username: 'user1', password: 'pass1' },
+        { username: 'user2', password: 'pass2' }
+      ];
+
+      for (let user of users) {
+        await UserService.createUser(user);
+      }
+
+      const allUsers = await UserService.getAllUsers();
+      expect(allUsers).toHaveLength(2);
+      allUsers.forEach(user => {
+        expect(user.password).toBeUndefined();
+      });
+    });
+
+    it('should return empty array when no users exist', async () => {
+      const allUsers = await UserService.getAllUsers();
+      expect(allUsers).toHaveLength(0);
+    });
+  });
+});
