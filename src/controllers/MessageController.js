@@ -23,7 +23,7 @@ function createMessageController(userService, messageService, observerService, i
         this.notifyObservers(data);
 
         res.status(201).json({
-          message: "Message posted successfully!",
+          message: "Message posted successfully!",        
           data,
         });
       } catch (error) {

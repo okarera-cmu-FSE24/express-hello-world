@@ -25,6 +25,9 @@ const createMessageController = require('./controllers/MessageController');
 const createStatusController = require('./controllers/StatusController');
 const createChatPrivatelyController = require('./controllers/ChatPrivatelyController');
 
+// Import middleware
+const createProtectMiddleware = require('./middlewares/authMiddleware');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -54,15 +57,17 @@ async function startServer() {
         const privateMessageService = createPrivateMessageService(connection);
         const observerService = createObserverService();
 
+        const protect = createProtectMiddleware(userService);
+
         const userController = createUserController(userService);
         const messageController = createMessageController(userService, messageService, observerService, io);
         const statusController = createStatusController(statusService, userService);
         const chatPrivatelyController = createChatPrivatelyController(privateMessageService, userService, io);
 
         // Set up routes using factories
-        app.use('/users', userRoutesFactory(userController));
-        app.use('/messages', messageRoutesFactory(messageController));
-        app.use('', statusRoutesFactory(statusController));
+        app.use('/users', userRoutesFactory(userController, protect));
+        app.use('/messages', messageRoutesFactory(messageController, protect));
+        app.use('', statusRoutesFactory(statusController, protect));
 
         io.on('connection', (socket) => {
             console.log('New client connected:', socket.id);
