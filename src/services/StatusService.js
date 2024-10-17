@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const StatusModel = require('../models/Status');
 
 class StatusService {
@@ -21,7 +20,6 @@ class StatusService {
 }
 
 module.exports = new StatusService();
-=======
 
 function createStatusService(connection) {
   const { getModel: getStatusModel } = require("../models/Status");
@@ -45,4 +43,3 @@ function createStatusService(connection) {
 }
 
 module.exports = createStatusService;
->>>>>>> backend-deploy

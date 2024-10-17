@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // services/PrivateMessageService.js
 const PrivateMessageModel = require('../models/PrivateMessage');
 
@@ -51,7 +50,6 @@ class PrivateMessageService {
 }
 
 module.exports = new PrivateMessageService();
-=======
 
 function createPrivateMessageService(connection) {
   const { getModel: getPrivateMessageModel } = require('../models/PrivateMessage');
@@ -103,4 +101,3 @@ function createPrivateMessageService(connection) {
 }
 
 module.exports = createPrivateMessageService;
->>>>>>> backend-deploy

@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const dotenv = require('dotenv');
 const http = require('http');
@@ -71,12 +69,11 @@ async function startServer() {
 
         io.on('connection', (socket) => {
             console.log('New client connected:', socket.id);
+            observerService.add(socket);
             socket.on('newMessage', (message) => {
                 // Broadcasting to all connected clients
                 io.emit('newMessage', message);
-                console.log("newMessage event emitted from backend");
             });
-            observerService.add(socket);
             socket.on('disconnect', () => {
                 console.log('Client disconnected:', socket.id);
                 observerService.remove(socket.id);

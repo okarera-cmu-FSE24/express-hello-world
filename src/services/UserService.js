@@ -17,7 +17,7 @@ function createUserService(connection) {
     },
 
     async findById(id) {
-        console.log("id in findid  " + id);
+        // console.log("id in findid  " + id);
       return await UserModel.findById(id).select("-password");
     },
 
