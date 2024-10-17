@@ -74,6 +74,7 @@ async function startServer() {
             socket.on('newMessage', (message) => {
                 // Broadcasting to all connected clients
                 io.emit('newMessage', message);
+                console.log("newMessage event emitted from backend");
             });
             observerService.add(socket);
             socket.on('disconnect', () => {
