@@ -72,6 +72,10 @@ async function startServer() {
         io.on('connection', (socket) => {
             console.log('New client connected:', socket.id);
             observerService.add(socket);
+            socket.on('newMessage', (message) => {
+                // Broadcasting to all connected clients
+                io.emit('newMessage', message);
+            });
             socket.on('disconnect', () => {
                 console.log('Client disconnected:', socket.id);
                 observerService.remove(socket.id);
