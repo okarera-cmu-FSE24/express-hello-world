@@ -1,0 +1,126 @@
+const MessageService = require('../../models/Message.js');
+const UserService = require('../../../models/User.js');
+const mongoose = require('mongoose');
+
+describe('MessageService', () => {
+  let testUser;
+
+  beforeEach(async () => {
+    testUser = await UserService.createUser({
+      username: 'messagetest',
+      password: 'testpass123'
+    });
+  });
+
+  describe('createMessage', () => {
+    it('should create a new message successfully', async () => {
+      const messageData = {
+        message: 'Test message content',
+        user: testUser._id
+      };
+
+      const message = await MessageService.createMessage(messageData);
+
+      expect(message).toBeDefined();
+      expect(message.message).toBe(messageData.message);
+      expect(message.user.toString()).toBe(testUser._id.toString());
+      expect(message.createdAt).toBeDefined();
+    });
+
+    it('should fail when required fields are missing', async () => {
+      await expect(async () => {
+        await MessageService.createMessage({ message: 'Test message' });
+      }).rejects.toThrow();
+
+      await expect(async () => {
+        await MessageService.createMessage({ user: testUser._id });
+      }).rejects.toThrow();
+    });
+
+    it('should fail when user does not exist', async () => {
+      const nonExistentUserId = new mongoose.Types.ObjectId();
+      await expect(async () => {
+        await MessageService.createMessage({
+          message: 'Test message',
+          user: nonExistentUserId
+        });
+      }).rejects.toThrow();
+    });
+  });
+
+  describe('getMessagesByUser', () => {
+    beforeEach(async () => {
+      const messages = [
+        { message: 'Message 1', user: testUser._id },
+        { message: 'Message 2', user: testUser._id }
+      ];
+
+      for (let msg of messages) {
+        await MessageService.createMessage(msg);
+      }
+    });
+
+    it('should return all messages for a specific user', async () => {
+      const messages = await MessageService.getMessagesByUser(testUser._id);
+
+      expect(messages).toHaveLength(2);
+      messages.forEach(message => {
+        expect(message.user.username).toBe(testUser.username);
+      });
+    });
+
+    it('should return empty array for user with no messages', async () => {
+      const anotherUser = await UserService.createUser({
+        username: 'nomessages',
+        password: 'pass123'
+      });
+
+      const messages = await MessageService.getMessagesByUser(anotherUser._id);
+      expect(messages).toHaveLength(0);
+    });
+
+    it('should populate user details in messages', async () => {
+      const messages = await MessageService.getMessagesByUser(testUser._id);
+
+      messages.forEach(message => {
+        expect(message.user).toHaveProperty('username');
+        expect(message.user.password).toBeUndefined();
+      });
+    });
+  });
+
+  describe('getAllMessages', () => {
+    beforeEach(async () => {
+      const anotherUser = await UserService.createUser({
+        username: 'anothermessageuser',
+        password: 'pass123'
+      });
+
+      const messages = [
+        { message: 'Message 1', user: testUser._id },
+        { message: 'Message 2', user: testUser._id },
+        { message: 'Message 3', user: anotherUser._id }
+      ];
+
+      for (let msg of messages) {
+        await MessageService.createMessage(msg);
+      }
+    });
+
+    it('should return all messages with populated user details', async () => {
+      const messages = await MessageService.getAllMessages();
+
+      expect(messages).toHaveLength(3);
+      messages.forEach(message => {
+        expect(message.user).toHaveProperty('username');
+        expect(message.user.password).toBeUndefined();
+      });
+    });
+
+    it('should return empty array when no messages exist', async () => {
+      await mongoose.connection.collection('messages').deleteMany({});
+      const messages = await MessageService.getAllMessages();
+      expect(messages).toHaveLength(0);
+    });
+  });
+});

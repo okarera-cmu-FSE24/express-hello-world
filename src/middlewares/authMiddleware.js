@@ -1,19 +1,18 @@
-const jwt = require('jsonwebtoken');
-const UserService = require('../models/User'); 
+// Desc: Middleware to protect routes from unauthorized access
 
-const protect = async (req, res, next) => {
+const jwt = require('jsonwebtoken');
+
+const createProtectMiddleware = (userService) => async (req, res, next) => {
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-           
-            req.user = await UserService.findById(decoded.id);
+            req.user = await userService.findById(decoded.id);
 
             if (!req.user) {
                 return res.status(404).json({ message: 'User not found' });
             }
-
             next();
         } catch (error) {
             res.status(401).json({ message: 'Not authorized, token failed' });
@@ -23,4 +22,4 @@ const protect = async (req, res, next) => {
     }
 };
 
-module.exports = protect;
+module.exports = createProtectMiddleware;

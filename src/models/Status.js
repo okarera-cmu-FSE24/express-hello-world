@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
 
+const mongoose = require('mongoose');
 const statusSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the user
@@ -9,6 +9,5 @@ const statusSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const StatusModel = mongoose.model("Status", statusSchema);
 
-module.exports = StatusModel;
+module.exports = { getModel: (connection) => connection.model("Status", statusSchema) };

@@ -1,6 +1,5 @@
-// models/PrivateMessage.js
-const mongoose = require("mongoose");
 
+const mongoose = require('mongoose');
 const privateMessageSchema = new mongoose.Schema(
   {
     content: { type: String, required: true },
@@ -10,6 +9,5 @@ const privateMessageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const PrivateMessageModel = mongoose.model("PrivateMessage", privateMessageSchema);
+module.exports = { getModel: (connection) => connection.model("PrivateMessage", privateMessageSchema) };
 
-module.exports = PrivateMessageModel;

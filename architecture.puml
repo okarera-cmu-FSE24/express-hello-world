@@ -1,0 +1,64 @@
+@startuml
+actor Client
+
+node Server {
+    [index.js]
+
+    package Routes {
+        [messageRoutes]
+        [userRoutes]
+        [statusRoutes]
+    }
+
+    package Controller {
+        [MessageController]
+        [UserController]
+        [StatusController]
+        [ChatPrivatelyController]
+    }
+    package Services {
+        [MessageService]
+        [UserService]
+        [StatusService]
+        [ObserverService]
+        [PrivateMessageService]
+        [dbConnectionService]
+    }
+    package Middlewares {
+        [AuthMiddleware]
+    }
+
+    [Socket.IO]
+ 
+}
+
+
+
+Client --> Server
+Server --> index.js
+index.js --> Middlewares
+index.js --> Routes
+index.js --> Controller
+
+Routes --> Controller
+Routes --> Middlewares
+
+Controller --> Services
+
+Middlewares --> Services
+
+Socket.IO --> ObserverService
+
+
+database MongoDB {
+    [Message]
+    [User]
+    [Status]
+    [PrivateMessage]
+}
+
+Services --> MongoDB
+
+
+
+@enduml
