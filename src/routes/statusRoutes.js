@@ -1,13 +1,16 @@
+// Desc: status routes factory function to create status routes with status controller methods as handlers for each route.
+
 const express = require('express');
-const StatusController = require('../controllers/StatusController');
-const protect = require('../middlewares/authMiddleware');  
 
+function statusRoutesFactory(statusController, protect) {
 const router = express.Router();
-
 // Route to update a user's emergency status
-router.post('/users/:userName/status/:statusCode', protect, StatusController.updateStatus);
+router.post('/users/:userName/status/:statusCode', protect, (req, res) => statusController.updateStatus(req, res));
 
 // Route to retrieve all status breadcrumbs for a user
-router.get('/users/:userName/statuscrumbs', protect, StatusController.getStatusHistory);
+router.get('/users/:userName/statuscrumbs', protect, (req, res) => statusController.getStatusHistory(req, res));
 
-module.exports = router;
+  return router;
+}
+
+module.exports = statusRoutesFactory;

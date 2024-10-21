@@ -1,21 +1,38 @@
-const express = require('express');
 
-const mongoose = require('mongoose');
+
+const express = require('express');
 const dotenv = require('dotenv');
-const userRoutes = require('./routes/userRoutes');
-const messageRoutes = require('./routes/messageRoutes');
-const statusRoutes = require('./routes/statusRoutes');
 const http = require('http');
-const { Server } = require('socket.io'); 
+const { Server } = require('socket.io');
 const cors = require('cors');
-const observers = require('./services/observerService')
+const { connectToDatabase } = require('./services/dbConnectionService');
+
+// Import factories
+const userRoutesFactory = require('./routes/userRoutes');
+const messageRoutesFactory = require('./routes/messageRoutes');
+const statusRoutesFactory = require('./routes/statusRoutes');
+const privateMessageRoutesFactory = require('./routes/privateMessageRoutes');
+
+// Import service factories
+const createUserService = require('./services/UserService');
+const createMessageService = require('./services/MessageService');
+const createStatusService = require('./services/StatusService');
+const createPrivateMessageService = require('./services/PrivateMessageService');
+const createObserverService = require('./services/ObserverService');
+
+// Import controller factories
+const createUserController = require('./controllers/UserController');
+const createMessageController = require('./controllers/MessageController');
+const createStatusController = require('./controllers/StatusController');
+const createChatPrivatelyController = require('./controllers/ChatPrivatelyController');
+
+// Import middleware
+const createProtectMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
 const server = http.createServer(app);
 
-
 dotenv.config();
-
 
 const io = new Server(server, {
     cors: {
@@ -26,42 +43,46 @@ const io = new Server(server, {
     },
 });
 
-//Middlewares configuration
+// Middlewares configuration
 app.use(cors());
 app.use(express.json());
 
+async function startServer() {
+    try {
+        const connection = await connectToDatabase(process.env.MONGO_URI);
+        console.log('Connected to MongoDB');
 
-// Connection to mongoDB Database
+        const userService = createUserService(connection);
+        const messageService = createMessageService(connection, userService);
+        const statusService = createStatusService(connection);
+        const privateMessageService = createPrivateMessageService(connection);
+        const observerService = createObserverService();
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('Connected to MongoDB'))
-.catch((error) => console.error('MongoDB connection error:', error));
+        const protect = createProtectMiddleware(userService);
 
-// Routes
-app.use('/users/', userRoutes);
-app.use('/messages/', messageRoutes); 
-app.use('', statusRoutes);
+        const userController = createUserController(userService);
+        const messageController = createMessageController(userService, messageService, observerService, io);
+        const statusController = createStatusController(statusService, userService);
+        const chatPrivatelyController = createChatPrivatelyController(privateMessageService, userService, io);
 
+        // Set up routes using factories
+        app.use('/users', userRoutesFactory(userController, protect));
+        app.use('/users',privateMessageRoutesFactory(chatPrivatelyController, protect));
+        app.use('/messages', messageRoutesFactory(messageController, protect));
+        app.use('', statusRoutesFactory(statusController, protect));
+        app.use('/messages',privateMessageRoutesFactory(chatPrivatelyController, protect));
 
-io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id);
+        if(process.env.NODE_ENV !== 'test'){
+            const PORT = process.env.PORT || 5000;
+            server.listen(PORT, () => {console.log(`Server running on port ${PORT}`)});
+        }
 
-    // Adding the new connected client to observers list
-    observers.add(socket);
-    socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-        observers.remove(socket.id);
-    });
-});
+    } catch (error) {
+        console.error('Failed to connect to the database:', error);
+        process.exit(1);
+    }
+}
 
-// Starting the server
-const PORT = process.env.PORT || 5000;
-mongoose.connection.once('open',()=>{
-server.listen(PORT, () => {console.log(`Server running on port ${PORT}`)});
-})
+startServer();
 
-console.log('observers');
-console.log(observers);
-
-
-module.exports = {observers,io};
+module.exports = { io, app };
