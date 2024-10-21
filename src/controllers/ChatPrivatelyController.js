@@ -1,7 +1,11 @@
 function createChatPrivatelyController(privateMessageService, userService, io) {
     return {
       async initiatePrivateChat(req, res) {
+function createChatPrivatelyController(privateMessageService, userService, io) {
+    return {
+      async initiatePrivateChat(req, res) {
         const { userName1, userName2 } = req.params;
+  
   
         try {
           const user1 = await userService.findByUsername(userName1);
@@ -29,11 +33,16 @@ function createChatPrivatelyController(privateMessageService, userService, io) {
           }
         } catch (error) {
           res.status(500).json({ message: error.message });
+          res.status(500).json({ message: error.message });
         }
       },
   
       async sendMessage(req, res) {
+      },
+  
+      async sendMessage(req, res) {
         const { sendingUserName, receivingUserName, content } = req.body;
+  
   
         try {
           const sender = await userService.findByUsername(sendingUserName);
@@ -65,6 +74,7 @@ function createChatPrivatelyController(privateMessageService, userService, io) {
           });
         } catch (error) {
           res.status(500).json({ message: error.message });
+          res.status(500).json({ message: error.message });
         }
       },
   
@@ -74,6 +84,7 @@ function createChatPrivatelyController(privateMessageService, userService, io) {
   
       async getPrivateMessages(req, res) {
         const { userName1, userName2 } = req.params;
+  
   
         try {
           const user1 = await userService.findByUsername(userName1);
@@ -86,13 +97,28 @@ function createChatPrivatelyController(privateMessageService, userService, io) {
           const messages = await privateMessageService.getMessagesBetweenUsers(user1._id, user2._id);
   
           res.status(200).json(messages);
+          const user1 = await userService.findByUsername(userName1);
+          const user2 = await userService.findByUsername(userName2);
+  
+          if (!user1 || !user2) {
+            return res.status(404).json({ message: 'One or both users not found' });
+          }
+  
+          const messages = await privateMessageService.getMessagesBetweenUsers(user1._id, user2._id);
+  
+          res.status(200).json(messages);
         } catch (error) {
+          res.status(500).json({ message: error.message });
           res.status(500).json({ message: error.message });
         }
       },
   
       async getNewMessage(req, res) {
+      },
+  
+      async getNewMessage(req, res) {
         const { userName1, userName2 } = req.params;
+  
   
         try {
           const user1 = await userService.findByUsername(userName1);
@@ -105,13 +131,28 @@ function createChatPrivatelyController(privateMessageService, userService, io) {
           const latestMessage = await privateMessageService.getLatestMessage(user1._id, user2._id);
   
           res.status(200).json(latestMessage);
+          const user1 = await userService.findByUsername(userName1);
+          const user2 = await userService.findByUsername(userName2);
+  
+          if (!user1 || !user2) {
+            return res.status(404).json({ message: 'One or both users not found' });
+          }
+  
+          const latestMessage = await privateMessageService.getLatestMessage(user1._id, user2._id);
+  
+          res.status(200).json(latestMessage);
         } catch (error) {
+          res.status(500).json({ message: error.message });
           res.status(500).json({ message: error.message });
         }
       },
   
       async getUsersPrivateChats(req, res) {
+      },
+  
+      async getUsersPrivateChats(req, res) {
         const { userName } = req.params;
+  
   
         try {
           const user = await userService.findByUsername(userName);
@@ -122,9 +163,23 @@ function createChatPrivatelyController(privateMessageService, userService, io) {
           const uniqueUsers = await privateMessageService.getUsersPrivateChats(user._id);
   
           res.status(200).json(uniqueUsers);
+          const user = await userService.findByUsername(userName);
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+  
+          const uniqueUsers = await privateMessageService.getUsersPrivateChats(user._id);
+  
+          res.status(200).json(uniqueUsers);
         } catch (error) {
           res.status(500).json({ message: error.message });
+          res.status(500).json({ message: error.message });
         }
+      }
+    };
+  }
+  
+  module.exports = createChatPrivatelyController;
       }
     };
   }

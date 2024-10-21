@@ -4,6 +4,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const http = require('http');
 const { Server } = require('socket.io');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const { connectToDatabase } = require('./services/dbConnectionService');
 
@@ -43,6 +44,7 @@ const io = new Server(server, {
     },
 });
 
+// Middlewares configuration
 // Middlewares configuration
 app.use(cors());
 app.use(express.json());
