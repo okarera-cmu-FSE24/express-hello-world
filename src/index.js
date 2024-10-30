@@ -4,9 +4,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const http = require('http');
 const { Server } = require('socket.io');
-const { Server } = require('socket.io');
 const cors = require('cors');
 const { connectToDatabase } = require('./services/dbConnectionService');
+const privateHandleSocket = require('./SocketHandlers/privateSocketHandlers');
 
 // Import factories
 const userRoutesFactory = require('./routes/userRoutes');
@@ -45,7 +45,6 @@ const io = new Server(server, {
 });
 
 // Middlewares configuration
-// Middlewares configuration
 app.use(cors());
 app.use(express.json());
 
@@ -73,6 +72,15 @@ async function startServer() {
         app.use('/messages', messageRoutesFactory(messageController, protect));
         app.use('', statusRoutesFactory(statusController, protect));
         app.use('/messages',privateMessageRoutesFactory(chatPrivatelyController, protect));
+
+        io.on('connection', (socket) => {
+            console.log('New client connected');
+
+            privateHandleSocket(io, socket);
+            socket.on('disconnect', () => {
+                console.log('Client disconnected');
+            });
+        });
 
         if(process.env.NODE_ENV !== 'test'){
             const PORT = process.env.PORT || 5000;
